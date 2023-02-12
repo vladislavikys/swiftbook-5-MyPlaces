@@ -9,7 +9,7 @@ import UIKit
 
 class NewPlaceViewController: UITableViewController {
     
-    var newPlace: Place?
+    var currentPlace: Place?
     var imageIsChanged = false
     
     
@@ -17,15 +17,15 @@ class NewPlaceViewController: UITableViewController {
     
     @IBOutlet weak var saveButton: UIBarButtonItem!
     @IBOutlet weak var placeName: UITextField!
-    @IBOutlet weak var locationName: UITextField!
-    @IBOutlet weak var typeName: UITextField!
+    @IBOutlet weak var placeLocation: UITextField!
+    @IBOutlet weak var placeType: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         saveButton.isEnabled = false
-        
         placeName.addTarget(self, action: #selector(textFieldChaged) , for: .editingChanged)
+        setupeEditScreen()
     }
     
     
@@ -59,8 +59,8 @@ class NewPlaceViewController: UITableViewController {
             view.endEditing(true)
         }
     }
-    func saveNewPlace(){
-
+    func savePlace(){
+        
         var image: UIImage?
         
         if imageIsChanged{
@@ -69,7 +69,46 @@ class NewPlaceViewController: UITableViewController {
             image = UIImage(systemName: "questionmark.folder")
         }
         
-        newPlace = Place(name: placeName.text!, location: locationName.text, type: typeName.text, restaurantImage: nil , image: image)
+        let imageData = image?.pngData()
+        
+        let newPlace = Place(name: placeName.text!,
+                             location: placeLocation.text,
+                             type: placeType.text,
+                             imageData: imageData)
+        if currentPlace != nil{
+            try! realm.write{
+                currentPlace?.name = newPlace.name
+                currentPlace?.location = newPlace.location
+                currentPlace?.type = newPlace.type
+                currentPlace?.imageData = newPlace.imageData
+            }
+        }else{
+            StorageManager.saveObject(newPlace)
+        }
+    }
+    
+    private func setupeEditScreen(){
+        if currentPlace != nil {
+            setupNavBar()
+            imageIsChanged = true
+
+            guard let data = currentPlace?.imageData, let image = UIImage(data: data) else {return}
+            
+            placeImage.image = image
+            placeImage.contentMode = .scaleAspectFill
+            placeName.text = currentPlace?.name
+            placeLocation.text = currentPlace?.location
+            placeType.text = currentPlace?.type
+        }
+    }
+    
+    private func setupNavBar(){
+        if let topItem = navigationController?.navigationBar.topItem{
+            topItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        }
+        navigationItem.leftBarButtonItem = nil
+        title = currentPlace?.name
+        saveButton.isEnabled = true
         
     }
     
