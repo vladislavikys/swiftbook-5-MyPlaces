@@ -95,6 +95,9 @@
                                     <segment title="Date"/>
                                     <segment title="Name"/>
                                 </segments>
+                                <connections>
+                                    <action selector="sortSelection:" destination="Hxo-Jk-ifQ" eventType="valueChanged" id="cZK-1Z-daa"/>
+                                </connections>
                             </segmentedControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="kdZ-FV-tGQ"/>
@@ -115,6 +118,9 @@
                                     <color systemColor="tertiaryLabelColor"/>
                                 </hierarchicalColors>
                             </imageReference>
+                            <connections>
+                                <action selector="reversedSorting:" destination="Hxo-Jk-ifQ" id="ENC-Gy-ZUT"/>
+                            </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="M7t-Iu-MHm">
                             <connections>
@@ -123,6 +129,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="reversedSortingButton" destination="y5Z-Pk-fXK" id="EEM-iq-s89"/>
+                        <outlet property="sedmentedControl" destination="Gci-gH-22H" id="Kcm-Yf-yhR"/>
                         <outlet property="tableView" destination="XyO-D2-x7h" id="tAJ-3T-9Jt"/>
                     </connections>
                 </viewController>

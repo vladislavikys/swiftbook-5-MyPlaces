@@ -10,10 +10,16 @@ import RealmSwift
 
 class MainTableViewController: UIViewController,UITableViewDelegate,UITableViewDataSource {
     
-  
+    
     
     var places: Results<Place>!
+    var ascendingSorting = true
+    
     @IBOutlet var tableView: UITableView!
+    
+    @IBOutlet var sedmentedControl: UISegmentedControl!
+    
+    @IBOutlet var reversedSortingButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,14 +28,14 @@ class MainTableViewController: UIViewController,UITableViewDelegate,UITableViewD
         
     }
     
-   //  MARK: - Table view data source
+    //  MARK: - Table view data source
     
-     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return places.isEmpty ? 0 : places.count
         
     }
     
-     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
         let place = places[indexPath.row]
         
@@ -45,7 +51,7 @@ class MainTableViewController: UIViewController,UITableViewDelegate,UITableViewD
     }
     
     //MARK Table view delegate
-     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
         let place = places[indexPath.row]
         let deleteAction = UITableViewRowAction(style: .default, title: "Del") { _, _ in
@@ -72,9 +78,34 @@ class MainTableViewController: UIViewController,UITableViewDelegate,UITableViewD
         guard let newPlaceVC = segue.source as? NewPlaceViewController else { return }
         
         newPlaceVC.savePlace()
-//        places.append(newPlaceVC.newPlace!)
+        //        places.append(newPlaceVC.newPlace!)
         tableView.reloadData()
-
+        
+    }
+    
+    @IBAction func sortSelection(_ sender: UISegmentedControl) {
+        sorting()
+    }
+    
+    @IBAction func reversedSorting(_ sender: Any) {
+        ascendingSorting.toggle()
+        
+        if ascendingSorting {
+            reversedSortingButton.image = UIImage(systemName: "arrowtriangle.down.square.fill")
+        }else{
+            reversedSortingButton.image = UIImage(systemName: "arrowtriangle.up.square.fill")
+        }
+        sorting()
+        
+    }
+    
+    private func sorting(){
+        if sedmentedControl.selectedSegmentIndex == 0 {
+            places = places.sorted(byKeyPath: "date", ascending: ascendingSorting)
+        }else{
+            places = places.sorted(byKeyPath: "name", ascending: ascendingSorting)
+        }
+        tableView.reloadData()
     }
 }
 
